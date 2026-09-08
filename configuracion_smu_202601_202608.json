@@ -1,0 +1,63 @@
+{
+  "cliente": "SMU",
+  "pais": "Chile",
+  "periodo_inicio": "01-2026",
+  "periodo_fin": "08-2026",
+  "fecha_corte": "2026-08-30",
+  "mes_actividad_reciente": "08-2026",
+  "cobertura_mes_reciente": 0.967741935483871,
+  "numero_gar": 440,
+  "eventos_nacionales_agrupados": 130890,
+  "tiendas_smu": 216,
+  "eventos_smu": 6018,
+  "tiendas_con_gar": 139,
+  "tiendas_sin_gar": 77,
+  "tiendas_dbscan_directa": 138,
+  "tiendas_contencion_limitrofe": 1,
+  "metodo_severidad": "Winsorización P99.5 por Tipo_Evento",
+  "umbrales_winsor_por_tipo": {
+    "Descargas": 1136677.0,
+    "Hurto": 2166038.0149999936,
+    "Robo": 63381504.000000246
+  },
+  "eps_km": 0.5,
+  "min_samples": 20,
+  "paleta_institucional": {
+    "azul_marino": "#193B5A",
+    "azul_medio": "#4F82BD",
+    "azul_claro": "#A9C3DF",
+    "rojo": "#C94F4F",
+    "gris": "#B8BEC6",
+    "gris_claro": "#E7EBF0",
+    "negro": "#111111",
+    "blanco": "#FFFFFF"
+  },
+  "colores_semaforo": {
+    "Crítica": "#D73027",
+    "Alta": "#F28E2B",
+    "Media": "#F2C94C",
+    "Baja": "#2E9D62"
+  },
+  "colores_actividad": {
+    "Actividad muy anómala": "#7A0019",
+    "Actividad anómala": "#C94F4F",
+    "Actividad elevada": "#F2C94C",
+    "Sin exceso reciente": "#B8BEC6"
+  },
+  "umbrales_iire": {
+    "critica": 79.91363636363636,
+    "alta": 66.3409090909091,
+    "media": 51.05681818181818
+  },
+  "umbrales_irc": {
+    "critica": 85.73865192855578,
+    "alta": 70.5990096975674,
+    "media": 45.56596537365769
+  },
+  "archivos": {
+    "gar_csv": "gar_chile_202601_202608.csv",
+    "gar_json": "gar_chile_202601_202608.json",
+    "pines_csv": "pines_smu_202601_202608.csv",
+    "pines_json": "pines_smu_202601_202608.json"
+  }
+}

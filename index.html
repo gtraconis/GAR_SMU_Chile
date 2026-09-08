@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Portal de Inteligencia Geoespacial GAR · SMU Chile</title>
+
+    <style>
+        :root {
+            --azul:#193B5A;
+            --azul-medio:#4F82BD;
+            --azul-claro:#A9C3DF;
+            --rojo:#C94F4F;
+            --gris:#B8BEC6;
+            --fondo:#F4F6F8;
+            --blanco:#FFFFFF;
+            --negro:#111111;
+            --critica:#D73027;
+            --alta:#F28E2B;
+            --media:#F2C94C;
+            --baja:#2E9D62;
+        }
+
+        * {
+            box-sizing:border-box;
+        }
+
+        html {
+            scroll-behavior:smooth;
+        }
+
+        body {
+            margin:0;
+            background:var(--fondo);
+            color:var(--negro);
+            font-family:
+                Inter, Arial, Helvetica, sans-serif;
+        }
+
+        .cabecera {
+            background:
+                linear-gradient(
+                    125deg,
+                    #193B5A 0%,
+                    #244F73 64%,
+                    #4F82BD 100%
+                );
+            color:white;
+            padding:42px max(6vw, 28px);
+            border-bottom:6px solid var(--rojo);
+        }
+
+        .cabecera-marca {
+            font-size:13px;
+            font-weight:800;
+            letter-spacing:2px;
+            text-transform:uppercase;
+            opacity:.88;
+        }
+
+        .cabecera h1 {
+            margin:12px 0 6px;
+            max-width:950px;
+            font-size:clamp(30px, 4vw, 54px);
+            line-height:1.04;
+        }
+
+        .cabecera p {
+            margin:0;
+            font-size:18px;
+            color:#DCE7F0;
+        }
+
+        .navegacion {
+            position:sticky;
+            top:0;
+            z-index:10000;
+            display:flex;
+            gap:6px;
+            flex-wrap:wrap;
+            padding:10px max(6vw, 28px);
+            background:rgba(255,255,255,.96);
+            border-bottom:1px solid #D8DEE5;
+            box-shadow:0 2px 8px rgba(0,0,0,.08);
+        }
+
+        .navegacion a {
+            color:var(--azul);
+            padding:8px 12px;
+            border-radius:6px;
+            text-decoration:none;
+            font-size:13px;
+            font-weight:700;
+        }
+
+        .navegacion a:hover {
+            color:white;
+            background:var(--azul);
+        }
+
+        main {
+            width:min(1500px, 92vw);
+            margin:0 auto;
+            padding:28px 0 60px;
+        }
+
+        section {
+            margin:28px 0;
+        }
+
+        .titulo-seccion {
+            margin:0 0 16px;
+            color:var(--azul);
+            font-size:27px;
+            border-left:5px solid var(--rojo);
+            padding-left:12px;
+        }
+
+        .subtitulo-seccion {
+            margin:-8px 0 20px 17px;
+            color:#5C6670;
+            line-height:1.55;
+        }
+
+        .grid-kpi {
+            display:grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(190px, 1fr));
+            gap:14px;
+        }
+
+        .kpi {
+            position:relative;
+            overflow:hidden;
+            min-height:128px;
+            padding:20px;
+            background:white;
+            border-radius:10px;
+            border:1px solid #DDE3E8;
+            box-shadow:0 5px 18px rgba(25,59,90,.07);
+        }
+
+        .kpi::before {
+            content:"";
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:5px;
+            background:var(--azul-medio);
+        }
+
+        .kpi.alerta::before {
+            background:var(--rojo);
+        }
+
+        .kpi .valor {
+            color:var(--azul);
+            font-size:32px;
+            line-height:1;
+            font-weight:850;
+        }
+
+        .kpi .etiqueta {
+            margin-top:12px;
+            color:#59636E;
+            font-size:13px;
+            line-height:1.35;
+        }
+
+        .panel {
+            padding:22px;
+            background:white;
+            border:1px solid #DDE3E8;
+            border-radius:10px;
+            box-shadow:0 5px 18px rgba(25,59,90,.06);
+        }
+
+        .doble {
+            display:grid;
+            grid-template-columns:repeat(2, minmax(0, 1fr));
+            gap:18px;
+        }
+
+        .panel h3 {
+            color:var(--azul);
+            margin:0 0 15px;
+            font-size:18px;
+        }
+
+        .barra-fila {
+            margin:14px 0;
+        }
+
+        .barra-etiqueta {
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:5px;
+            font-size:13px;
+        }
+
+        .barra-fondo {
+            height:11px;
+            overflow:hidden;
+            background:#E7EBF0;
+            border-radius:10px;
+        }
+
+        .barra-valor {
+            height:100%;
+            min-width:2px;
+            border-radius:10px;
+        }
+
+        .hallazgos {
+            margin:0;
+            padding:0;
+            list-style:none;
+        }
+
+        .hallazgos li {
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            margin:10px 0;
+            padding:13px;
+            background:#F7F9FB;
+            border-left:3px solid var(--azul-medio);
+            border-radius:4px;
+            line-height:1.5;
+        }
+
+        .numero-hallazgo {
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex:0 0 25px;
+            width:25px;
+            height:25px;
+            border-radius:50%;
+            background:var(--azul);
+            color:white;
+            font-size:12px;
+            font-weight:800;
+        }
+
+        .mapa-contenedor {
+            overflow:hidden;
+            height:76vh;
+            min-height:590px;
+            background:white;
+            border:1px solid #CDD5DD;
+            border-radius:10px;
+            box-shadow:0 7px 24px rgba(25,59,90,.12);
+        }
+
+        .mapa-contenedor iframe {
+            width:100%;
+            height:100%;
+            border:0;
+        }
+
+        .tabla-scroll {
+            overflow-x:auto;
+        }
+
+        .tabla-ejecutiva {
+            width:100%;
+            border-collapse:collapse;
+            font-size:12px;
+        }
+
+        .tabla-ejecutiva th {
+            position:sticky;
+            top:0;
+            padding:11px 9px;
+            color:white;
+            background:var(--azul);
+            text-align:left;
+            white-space:nowrap;
+        }
+
+        .tabla-ejecutiva td {
+            padding:10px 9px;
+            border-bottom:1px solid #E2E6EA;
+            vertical-align:middle;
+            white-space:nowrap;
+        }
+
+        .tabla-ejecutiva tbody tr:hover {
+            background:#F0F5F9;
+        }
+
+        .nivel {
+            display:inline-block;
+            min-width:62px;
+            padding:4px 8px;
+            color:white;
+            text-align:center;
+            border-radius:12px;
+            font-weight:800;
+        }
+
+        .actividad {
+            display:inline-block;
+            padding:3px 7px;
+            border-left:5px solid;
+            background:#F3F4F6;
+            border-radius:3px;
+        }
+
+        .metodologia-grid {
+            display:grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(230px, 1fr));
+            gap:12px;
+        }
+
+        .metodo-item {
+            display:flex;
+            flex-direction:column;
+            gap:7px;
+            min-height:112px;
+            padding:16px;
+            background:#F7F9FB;
+            border-top:4px solid var(--azul-medio);
+            border-radius:6px;
+        }
+
+        .metodo-item strong {
+            color:var(--azul);
+        }
+
+        .metodo-item span {
+            color:#545F69;
+            font-size:13px;
+            line-height:1.45;
+        }
+
+        .nota {
+            margin-top:14px;
+            padding:13px 16px;
+            color:#4D5862;
+            background:#EEF3F7;
+            border-radius:6px;
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        footer {
+            padding:26px max(6vw, 28px);
+            color:#DCE7F0;
+            background:var(--azul);
+            text-align:center;
+            font-size:12px;
+        }
+
+        @media (max-width:900px) {
+            .doble {
+                grid-template-columns:1fr;
+            }
+
+            .mapa-contenedor {
+                height:680px;
+            }
+
+            .navegacion {
+                position:relative;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="cabecera">
+        <div class="cabecera-marca">
+            Servicios de Inteligencia ALTO
+        </div>
+
+        <h1>Portal de Inteligencia Geoespacial GAR</h1>
+        <p>SMU Chile · Enero–agosto de 2026</p>
+    </header>
+
+    <nav class="navegacion">
+        <a href="#resumen">Resumen</a>
+        <a href="#mapa">Mapa GAR</a>
+        <a href="#riesgo">Distribución</a>
+        <a href="#gar">GAR prioritarias</a>
+        <a href="#tiendas">Tiendas SMU</a>
+        <a href="#metodologia">Metodología</a>
+<a href="#recomendaciones">Recomendaciones</a>
+    </nav>
+
+    <main>
+        <section id="resumen">
+            <h2 class="titulo-seccion">
+                Panorama ejecutivo
+            </h2>
+
+            <p class="subtitulo-seccion">
+                Riesgo estructural, actividad reciente y
+                exposición propia de SMU integrados en una
+                sola lectura.
+            </p>
+
+            <div class="grid-kpi">
+                <div class="kpi">
+                    <div class="valor">
+                        440
+                    </div>
+                    <div class="etiqueta">
+                        Geocercas de Alto Riesgo
+                    </div>
+                </div>
+
+                <div class="kpi">
+                    <div class="valor">
+                        130,890
+                    </div>
+                    <div class="etiqueta">
+                        Eventos nacionales agrupados
+                    </div>
+                </div>
+
+                <div class="kpi alerta">
+                    <div class="valor">
+                        44
+                    </div>
+                    <div class="etiqueta">
+                        GAR con riesgo crítico
+                    </div>
+                </div>
+
+                <div class="kpi alerta">
+                    <div class="valor">
+                        46
+                    </div>
+                    <div class="etiqueta">
+                        GAR de atención inmediata
+                    </div>
+                </div>
+
+                <div class="kpi">
+                    <div class="valor">
+                        216
+                    </div>
+                    <div class="etiqueta">
+                        Tiendas SMU evaluadas
+                    </div>
+                </div>
+
+                <div class="kpi">
+                    <div class="valor">
+                        139
+                    </div>
+                    <div class="etiqueta">
+                        Tiendas dentro de una GAR
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel" style="margin-top:18px;">
+                <h3>Hallazgos principales</h3>
+                <ol class="hallazgos">
+                    
+    <li>
+        <span class="numero-hallazgo">1</span>
+        <span>Chile registra 440 Geocercas de Alto Riesgo que concentran 130,890 eventos.</span>
+    </li>
+    
+    <li>
+        <span class="numero-hallazgo">2</span>
+        <span>44 GAR presentan riesgo estructural crítico de acuerdo con el IIRE.</span>
+    </li>
+    
+    <li>
+        <span class="numero-hallazgo">3</span>
+        <span>46 GAR requieren atención inmediata al combinar riesgo estructural con actividad reciente elevada.</span>
+    </li>
+    
+    <li>
+        <span class="numero-hallazgo">4</span>
+        <span>139 de las 216 tiendas SMU se encuentran dentro de una GAR.</span>
+    </li>
+    
+    <li>
+        <span class="numero-hallazgo">5</span>
+        <span>La principal prioridad propia es LOS LEONES, con un IRC de 97.28.</span>
+    </li>
+    
+                </ol>
+            </div>
+        </section>
+
+        <section id="mapa">
+            <h2 class="titulo-seccion">
+                Mapa interactivo de riesgo
+            </h2>
+
+            <p class="subtitulo-seccion">
+                Active o desactive niveles de riesgo, explore
+                las GAR y consulte el contexto geoespacial de
+                cada tienda SMU.
+            </p>
+
+            <div class="mapa-contenedor">
+                <iframe
+                    src="mapa_gar_smu_202601_202608.html"
+                    title="Mapa GAR SMU Chile"
+                    loading="lazy"
+                ></iframe>
+            </div>
+        </section>
+
+        <section id="riesgo">
+            <h2 class="titulo-seccion">
+                Distribución de criticidad
+            </h2>
+
+            <div class="doble">
+                <div class="panel">
+                    <h3>Riesgo estructural de las GAR</h3>
+                    
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Crítica</span>
+                    <strong>
+                        44 GAR
+                        · 10.0%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:10.00%;
+                            background:
+                            #D73027;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Alta</span>
+                    <strong>
+                        66 GAR
+                        · 15.0%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:15.00%;
+                            background:
+                            #F28E2B;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Media</span>
+                    <strong>
+                        110 GAR
+                        · 25.0%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:25.00%;
+                            background:
+                            #F2C94C;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Baja</span>
+                    <strong>
+                        220 GAR
+                        · 50.0%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:50.00%;
+                            background:
+                            #2E9D62;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+                </div>
+
+                <div class="panel">
+                    <h3>Riesgo propio de tiendas SMU</h3>
+                    
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Crítica</span>
+                    <strong>
+                        22 tiendas
+                        · 10.2%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:10.19%;
+                            background:
+                            #D73027;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Alta</span>
+                    <strong>
+                        32 tiendas
+                        · 14.8%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:14.81%;
+                            background:
+                            #F28E2B;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Media</span>
+                    <strong>
+                        54 tiendas
+                        · 25.0%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:25.00%;
+                            background:
+                            #F2C94C;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="barra-fila">
+                <div class="barra-etiqueta">
+                    <span>Baja</span>
+                    <strong>
+                        108 tiendas
+                        · 50.0%
+                    </strong>
+                </div>
+
+                <div class="barra-fondo">
+                    <div class="barra-valor"
+                         style="
+                            width:50.00%;
+                            background:
+                            #2E9D62;
+                         ">
+                    </div>
+                </div>
+            </div>
+            
+                </div>
+            </div>
+        </section>
+
+        <section id="gar">
+            <h2 class="titulo-seccion">
+                GAR prioritarias
+            </h2>
+
+            <div class="panel">
+                <h3>Top 10 por riesgo estructural</h3>
+                
+    <div class="tabla-scroll">
+        <table class="tabla-ejecutiva">
+            <thead>
+                <tr><th>Ranking</th><th>GAR</th><th>Eventos</th><th>Monto robusto</th><th>IIRE</th><th>Riesgo</th><th>IAA</th><th>Actividad reciente</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>GAR-0237</td><td>4,397</td><td>$467,182,275</td><td>90.36</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>89.43</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td></tr><tr><td>2</td><td>GAR-0212</td><td>2,427</td><td>$385,259,555</td><td>90.16</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>53.03</td><td><span class="actividad" style="border-left-color:#F28E2B;">Actividad anómala</span></td></tr><tr><td>3</td><td>GAR-0120</td><td>1,422</td><td>$270,690,980</td><td>89.58</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>0.00</td><td><span class="actividad" style="border-left-color:#B8BEC6;">Sin exceso reciente</span></td></tr><tr><td>4</td><td>GAR-0080</td><td>1,413</td><td>$154,247,280</td><td>88.17</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>0.00</td><td><span class="actividad" style="border-left-color:#B8BEC6;">Sin exceso reciente</span></td></tr><tr><td>5</td><td>GAR-0092</td><td>5,870</td><td>$224,472,189</td><td>86.85</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>79.72</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td></tr><tr><td>6</td><td>GAR-0345</td><td>2,312</td><td>$150,256,267</td><td>86.57</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>0.00</td><td><span class="actividad" style="border-left-color:#B8BEC6;">Sin exceso reciente</span></td></tr><tr><td>7</td><td>GAR-0187</td><td>2,234</td><td>$103,791,987</td><td>85.66</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>0.00</td><td><span class="actividad" style="border-left-color:#B8BEC6;">Sin exceso reciente</span></td></tr><tr><td>8</td><td>GAR-0015</td><td>1,931</td><td>$183,676,651</td><td>85.64</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>73.42</td><td><span class="actividad" style="border-left-color:#F28E2B;">Actividad anómala</span></td></tr><tr><td>9</td><td>GAR-0363</td><td>2,569</td><td>$257,238,227</td><td>85.56</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>87.87</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td></tr><tr><td>10</td><td>GAR-0226</td><td>1,314</td><td>$168,738,360</td><td>85.06</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>33.86</td><td><span class="actividad" style="border-left-color:#F2C94C;">Actividad elevada</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+            </div>
+
+            <div class="panel" style="margin-top:18px;">
+                <h3>Top por actividad reciente</h3>
+                
+    <div class="tabla-scroll">
+        <table class="tabla-ejecutiva">
+            <thead>
+                <tr><th>GAR</th><th>Eventos recientes</th><th>Actividad esperada</th><th>Exceso</th><th>IAA</th><th>Nivel de actividad</th><th>Prioridad</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>GAR-0302</td><td>88</td><td>36.43</td><td>51.57</td><td>93.82</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Aceleración reciente</td></tr><tr><td>GAR-0091</td><td>148</td><td>82.29</td><td>65.71</td><td>92.75</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr><tr><td>GAR-0328</td><td>202</td><td>133.43</td><td>68.57</td><td>92.23</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr><tr><td>GAR-0202</td><td>55</td><td>19.00</td><td>36.00</td><td>91.74</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Aceleración reciente</td></tr><tr><td>GAR-0237</td><td>661</td><td>533.71</td><td>127.29</td><td>89.43</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr><tr><td>GAR-0307</td><td>65</td><td>33.00</td><td>32.00</td><td>89.43</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr><tr><td>GAR-0263</td><td>282</td><td>213.71</td><td>68.29</td><td>89.40</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr><tr><td>GAR-0179</td><td>167</td><td>117.14</td><td>49.86</td><td>89.20</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr><tr><td>GAR-0227</td><td>52</td><td>24.71</td><td>27.29</td><td>88.22</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Aceleración reciente</td></tr><tr><td>GAR-0363</td><td>379</td><td>312.86</td><td>66.14</td><td>87.87</td><td><span class="actividad" style="border-left-color:#C94F4F;">Actividad muy anómala</span></td><td>Atención inmediata</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+            </div>
+        </section>
+
+        <section id="tiendas">
+            <h2 class="titulo-seccion">
+                Prioridades de SMU
+            </h2>
+
+            <p class="subtitulo-seccion">
+                El IRC mide el riesgo propio de cada tienda;
+                el IIRE aporta el nivel de riesgo de su entorno.
+            </p>
+
+            <div class="panel">
+                <h3>Top 10 tiendas por IRC</h3>
+                
+    <div class="tabla-scroll">
+        <table class="tabla-ejecutiva">
+            <thead>
+                <tr><th>Ranking</th><th>Tienda</th><th>Formato</th><th>Eventos</th><th>Monto robusto</th><th>IRC</th><th>Riesgo propio</th><th>GAR principal</th><th>IIRE entorno</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>LOS LEONES</td><td>Unimarc</td><td>293</td><td>$153,891,529</td><td>97.28</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0184</td><td>82.14</td></tr><tr><td>2</td><td>CHAÑARCILLO</td><td>Unimarc</td><td>736</td><td>$37,880,313</td><td>95.21</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0019</td><td>84.17</td></tr><tr><td>3</td><td>GRAN  AVENIDA</td><td>Super 10</td><td>304</td><td>$26,315,502</td><td>95.09</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0229</td><td>83.86</td></tr><tr><td>4</td><td>ALTO PEÑUELAS</td><td>Unimarc</td><td>310</td><td>$23,341,785</td><td>94.98</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0040</td><td>71.95</td></tr><tr><td>5</td><td>COPIAPÓ</td><td>Unimarc</td><td>649</td><td>$33,028,598</td><td>94.72</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0020</td><td>68.90</td></tr><tr><td>6</td><td>EL PALOMAR</td><td>Unimarc</td><td>207</td><td>$16,233,614</td><td>93.90</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0022</td><td>58.03</td></tr><tr><td>7</td><td>GABRIELA</td><td>Super 10</td><td>158</td><td>$15,517,706</td><td>93.69</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0268</td><td>60.08</td></tr><tr><td>8</td><td>LA CISTERNA</td><td>Super 10</td><td>146</td><td>$15,625,247</td><td>93.65</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0251</td><td>77.10</td></tr><tr><td>9</td><td>LA TRAVESÍA</td><td>Super 10</td><td>139</td><td>$14,980,789</td><td>92.91</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0192</td><td>52.86</td></tr><tr><td>10</td><td>PORTALES</td><td>Super 10</td><td>141</td><td>$13,328,034</td><td>92.54</td><td><span class="nivel" style="background:#D73027;">Crítica</span></td><td>GAR-0283</td><td>52.06</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+            </div>
+        </section>
+
+        <section id="metodologia">
+            <h2 class="titulo-seccion">
+                Metodología
+            </h2>
+
+            <div class="panel">
+                <div class="metodologia-grid">
+                    
+    <div class="metodo-item">
+        <strong>Universo</strong>
+        <span>Eventos nacionales de Hurto, Robo y Descargas registrados entre enero y agosto de 2026.</span>
+    </div>
+    
+    <div class="metodo-item">
+        <strong>GAR</strong>
+        <span>DBSCAN geoespacial con eps de 0.50 km y min_samples de 20.</span>
+    </div>
+    
+    <div class="metodo-item">
+        <strong>Severidad</strong>
+        <span>Winsorización nacional P99.5 diferenciada por Tipo_Evento.</span>
+    </div>
+    
+    <div class="metodo-item">
+        <strong>IIRE</strong>
+        <span>Índice de riesgo estructural de cada geocerca.</span>
+    </div>
+    
+    <div class="metodo-item">
+        <strong>IAA</strong>
+        <span>Índice de actividad reciente por encima del comportamiento esperado.</span>
+    </div>
+    
+    <div class="metodo-item">
+        <strong>IRC</strong>
+        <span>Índice de riesgo propio de las tiendas SMU.</span>
+    </div>
+    
+                </div>
+
+                <div class="nota">
+                    La severidad fue robustecida mediante
+                    winsorización P99.5 por Tipo_Evento.
+                    Las GAR sin información económica conservan
+                    sus montos originales vacíos; la imputación
+                    se utiliza exclusivamente en el componente
+                    de severidad del IIRE.
+                </div>
+            </div>
+        </section>
+    
+<section id="recomendaciones">
+    <h2 class="titulo-seccion">
+        Recomendaciones
+    </h2>
+
+    <p class="subtitulo-seccion">
+        Líneas de acción derivadas del riesgo estructural,
+        la actividad reciente y la exposición propia de SMU.
+    </p>
+
+    <div class="metodologia-grid">
+
+        <div class="metodo-item">
+            <strong>1. Atención inmediata</strong>
+            <span>
+                Priorizar las 46 GAR clasificadas como
+                Atención inmediata, comenzando por aquellas
+                que contienen tiendas SMU críticas o altas.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>2. Vigilancia de la aceleración</strong>
+            <span>
+                Monitorear las 16 GAR con aceleración reciente,
+                aunque su riesgo estructural todavía no sea
+                crítico, para anticipar posibles escaladas.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>3. Intervención en tiendas críticas</strong>
+            <span>
+                Diseñar planes específicos para las 22 tiendas
+                SMU críticas, considerando su tipo de evento
+                dominante, frecuencia, persistencia y entorno.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>4. Lectura conjunta IRC–IIRE–IAA</strong>
+            <span>
+                Evitar priorizar exclusivamente por el riesgo
+                propio de la tienda. Integrar el IRC con el
+                riesgo estructural y la actividad reciente
+                de la GAR correspondiente.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>5. Tiendas sin GAR</strong>
+            <span>
+                Mantener seguimiento individual sobre las
+                77 tiendas sin GAR contenedora. Su ausencia
+                de una GAR no implica ausencia de riesgo propio.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>6. Calidad económica</strong>
+            <span>
+                Interpretar con cautela las tiendas y GAR con
+                baja cobertura monetaria o sin información
+                económica, privilegiando frecuencia,
+                persistencia y composición de eventos.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>7. Respuesta diferenciada</strong>
+            <span>
+                Adaptar las medidas preventivas al evento
+                dominante: Hurto, Robo o Descargas, evitando
+                aplicar una misma estrategia a todas las
+                ubicaciones.
+            </span>
+        </div>
+
+        <div class="metodo-item">
+            <strong>8. Actualización periódica</strong>
+            <span>
+                Actualizar mensualmente el modelo para
+                recalcular el IAA, detectar nuevas
+                aceleraciones y revisar la permanencia
+                de las prioridades operativas.
+            </span>
+        </div>
+
+    </div>
+
+    <div class="nota">
+        La priorización debe comenzar por la coincidencia
+        entre riesgo propio crítico o alto, entorno GAR
+        crítico o alto y actividad reciente anómala.
+        Esta combinación representa la señal operativa
+        más completa del modelo.
+    </div>
+</section>
+
+</main>
+
+    <footer>
+        Servicios de Inteligencia ALTO ·
+        Portal GAR SMU Chile ·
+        Periodo 01-2026 a 08-2026
+    </footer>
+</body>
+</html>
