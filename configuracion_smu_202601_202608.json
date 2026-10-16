@@ -6,22 +6,28 @@
   "fecha_corte": "2026-08-30",
   "mes_actividad_reciente": "08-2026",
   "cobertura_mes_reciente": 0.967741935483871,
-  "numero_gar": 440,
-  "eventos_nacionales_agrupados": 130890,
+  "numero_gar": 434,
+  "eventos_nacionales_agrupados": 122731,
   "tiendas_smu": 216,
-  "eventos_smu": 6018,
+  "eventos_smu": 5842,
   "tiendas_con_gar": 139,
   "tiendas_sin_gar": 77,
-  "tiendas_dbscan_directa": 138,
+  "tiendas_dbscan_directa": 137,
   "tiendas_contencion_limitrofe": 1,
-  "metodo_severidad": "Winsorización P99.5 por Tipo_Evento",
+  "tiendas_contencion_interior": 1,
+  "metodo_severidad": "Winsorización P99.5 nacional por Tipo_Evento",
   "umbrales_winsor_por_tipo": {
     "Descargas": 1136677.0,
-    "Hurto": 2166038.0149999936,
+    "Hurto": 2511901.999999981,
     "Robo": 63381504.000000246
   },
   "eps_km": 0.5,
   "min_samples": 20,
+  "holding_excluido": "Walmart",
+  "cuenta_excluida": "Central Monitoreo Walmart",
+  "descripcion_excluida": "Variantes de ingreso alto / ajuste inventario",
+  "eventos_central_residuales": 0,
+  "eventos_inventario_residuales": 0,
   "paleta_institucional": {
     "azul_marino": "#193B5A",
     "azul_medio": "#4F82BD",
@@ -45,14 +51,14 @@
     "Sin exceso reciente": "#B8BEC6"
   },
   "umbrales_iire": {
-    "critica": 79.91363636363636,
-    "alta": 66.3409090909091,
-    "media": 51.05681818181818
+    "critica": 79.55875576036867,
+    "alta": 65.80645161290323,
+    "media": 50.5126728110599
   },
   "umbrales_irc": {
     "critica": 85.73865192855578,
     "alta": 70.5990096975674,
-    "media": 45.56596537365769
+    "media": 45.59555117247426
   },
   "archivos": {
     "gar_csv": "gar_chile_202601_202608.csv",
